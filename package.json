@@ -1,0 +1,33 @@
+{
+  "name": "deysis-bypass",
+  "version": "1.0.0",
+  "description": "Deysis yoklama platformuna katılım otomasyonu - Telegram bot ile kullanıcı kayıt sistemi",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "setup-db": "node setup-database.js",
+    "test-deysis": "node test-deysis.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "mysql",
+    "yoklama",
+    "deysis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "mysql2": "^3.6.5",
+    "node-telegram-bot-api": "^0.64.0",
+    "puppeteer": "^24.23.0",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
