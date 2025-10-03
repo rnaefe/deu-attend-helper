@@ -1,199 +1,133 @@
-# Deysis Yoklama Otomasyonu - for educational purposes only
+# Deysis Attendance Automation – **for educational purposes only**
 
-Bu proje, DEÜ öğrencilerinin Deysis yoklama platformuna katılımını otomatize etmek için geliştirilmiş bir Telegram botudur. Bot, kullanıcıların Deysis platformuna otomatik giriş yapmasını ve yoklamaya katılmasını sağlar.
+This project is a Telegram bot developed to automate attendance on the Deysis platform for Dokuz Eylül University (DEU) students. The bot allows users to automatically log into Deysis and mark attendance using their credentials and class code.
 
-## 🚀 Özellikler
+---
 
-- ✅ Telegram bot ile kullanıcı kayıt sistemi
-- ✅ MySQL veritabanı entegrasyonu
-- ✅ Okul maili doğrulama (DEÜ domain kontrolü)
-- ✅ Şifre saklama (Deysis giriş için düz metin)
-- ✅ Kullanıcı profil yönetimi
-- ✅ Şifre değiştirme özelliği
-- ✅ **Deysis platformuna otomatik giriş ve yoklama katılımı**
-- ✅ **Akıllı browser yönetimi (ihtiyaç anında açılır/kapanır)**
-- ✅ **Gerçek zamanlı işlem takibi ve log mesajları**
-- ✅ **Konum spoofing (Tınaztepe Kampüsü)**
-- ✅ **Kamera/mikrofon izin reddi**
-- ✅ **Ders kodu doğrulama ve hata tespiti**
-- ✅ Web scraping ve oturum yönetimi
+## 🚀 Features
 
-## 📋 Gereksinimler
+* ✅ User registration system via Telegram bot
+* ✅ MySQL database integration
+* ✅ School email verification (DEU domain check)
+* ✅ Password storage (plain text for Deysis login)
+* ✅ User profile management
+* ✅ Password change functionality
+* ✅ **Automatic login to Deysis and attendance submission**
+* ✅ **Smart browser management (opens/closes only when required)**
+* ✅ **Real-time process tracking and log messages**
+* ✅ **Location spoofing (Tınaztepe Campus coordinates)**
+* ✅ **Camera/microphone permission denial**
+* ✅ **Class code validation and error detection**
+* ✅ Web scraping and session management
 
-- Node.js (v14 veya üzeri)
-- MySQL (v5.7 veya üzeri)
-- Telegram Bot Token (BotFather'dan alınacak)
+---
 
-## 🛠️ Kurulum
+## 📋 Requirements
 
-### 1. Projeyi İndirin
+* Node.js (v14 or later)
+* MySQL (v5.7 or later)
+* Telegram Bot Token (from BotFather)
+
+---
+
+## 🛠️ Setup
+
+### 1. Clone the Project
 
 ```bash
 git clone <repository-url>
 cd deysis_bypass
 ```
 
-### 2. Bağımlılıkları Yükleyin
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Çevre Değişkenlerini Ayarlayın
+### 3. Configure Environment Variables
 
-`env.example` dosyasını kopyalayın ve `.env` olarak yeniden adlandırın:
+Copy the `env.example` file and rename it to `.env`:
 
 ```bash
 cp env.example .env
 ```
 
-`.env` dosyasını düzenleyin:
+Update `.env`:
 
 ```env
-# Telegram Bot Token (BotFather'dan alınacak)
+# Telegram Bot Token (from BotFather)
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
 
-# MySQL Veritabanı Ayarları
+# MySQL Database Settings
 MYSQLHOST=localhost
 MYSQLPORT=3306
 MYSQLUSER=root
 MYSQL_ROOT_PASSWORD=your_password
 MYSQL_DATABASE=deysis_users
 
-# Bot Ayarları
+# Bot Settings
 BOT_ADMIN_ID=your_admin_telegram_id
 ```
 
-### 4. MySQL Veritabanını Hazırlayın
-
-MySQL'de yeni bir veritabanı oluşturun:
+### 4. Prepare MySQL Database
 
 ```sql
 CREATE DATABASE deysis_users CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 5. Veritabanı Tablolarını Oluşturun
+### 5. Create Tables
 
 ```bash
 npm run setup-db
 ```
 
-### 6. Botu Başlatın
+### 6. Start the Bot
 
 ```bash
 npm start
 ```
 
-## 🤖 Telegram Bot Kurulumu
+---
 
-### 1. BotFather ile Bot Oluşturun
+## 🤖 Telegram Bot Setup
 
-1. Telegram'da [@BotFather](https://t.me/botfather) ile konuşun
-2. `/newbot` komutunu gönderin
-3. Bot adını ve kullanıcı adını girin
-4. Bot token'ınızı alın ve `.env` dosyasına ekleyin
+### 1. Create Bot with BotFather
 
-### 2. Bot Komutlarını Ayarlayın (Opsiyonel)
+1. Talk to [@BotFather](https://t.me/botfather)
+2. Send `/newbot`
+3. Provide bot name and username
+4. Copy the token and add it to `.env`
 
-BotFather'da `/setcommands` komutunu kullanarak bot komutlarını ayarlayabilirsiniz:
-
-```
-start - Botu başlat
-register - Yeni kullanıcı kaydı
-profile - Profil bilgilerini görüntüle
-changepassword - Şifre değiştir
-attend - Yoklamaya katıl
-help - Yardım menüsü
-```
-
-## 📱 Bot Kullanımı
-
-### Temel Komutlar
-
-- `/start` - Botu başlat ve hoş geldin mesajını gör
-- `/register` - Yeni kullanıcı kaydı yap
-- `/profile` - Profil bilgilerini görüntüle
-- `/changepassword` - Şifre değiştir
-- `/attend` - **Yoklamaya otomatik katıl**
-- `/help` - Yardım menüsü
-
-### Kayıt Süreci
-
-1. `/register` komutunu kullanın
-2. DEÜ okul mailinizi girin (örn: ogrenci@ogr.deu.edu.tr)
-3. Deysis şifrenizi girin (Deysis platformuna giriş için kullanılacak)
-4. Kayıt tamamlandıktan sonra profil bilgilerinizi görüntüleyebilirsiniz
-
-### Yoklama Katılım Süreci
-
-1. `/attend` komutunu kullanın
-2. 6 haneli ders kodunuzu girin (örn: 123456)
-3. Bot otomatik olarak:
-   - Browser'ı açar
-   - Deysis'e giriş yapar
-   - Konumu Tınaztepe Kampüsü olarak ayarlar
-   - Yoklama sayfasına gider
-   - Ders kodunu girer
-   - Sonucu bildirir
-   - Browser'ı kapatır
-
-### Gerçek Zamanlı Takip
-
-Bot, yoklama katılım sürecinde size şu mesajları gönderir:
+### 2. Set Bot Commands (Optional)
 
 ```
-🌐 Browser başlatılıyor...
-✅ Browser hazır
-🌐 Browser başlatılıyor...
-📍 Konum ayarlanıyor...
-🔐 Deysis'e giriş yapılıyor...
-✅ Giriş başarılı
-🎯 Yoklama sayfasına gidiliyor...
-🔢 Ders kodu giriliyor... 123456
-❌ Ders bulunamadı 123456
-🔒 Browser kapatıldı
+start - Start the bot
+register - Register a new user
+profile - View your profile
+changepassword - Change password
+attend - Join attendance
+help - Show help menu
 ```
 
-### Başarılı Yoklama Katılımı Örneği
+---
 
-```
-📚 Yoklamaya Katıl
+## 📱 Usage
 
-Merhaba Ahmet
+### Main Commands
 
-Ders kodunuzu giriniz (6 haneli):
-Örnek: `123456`
+* `/start` – Start bot and see welcome message
+* `/register` – Register a new user
+* `/profile` – View your profile
+* `/changepassword` – Change password
+* `/attend` – **Automatically join attendance**
+* `/help` – Help menu
 
-🔄 Yoklamaya katılım başlatılıyor...
+---
 
-📧 E-posta: ahmet@ogr.deu.edu.tr
-🔢 Ders Kodu: `123456`
+## 🗄️ Database Structure
 
-🌐 Browser başlatılıyor...
-✅ Browser hazır
-🌐 Browser başlatılıyor...
-📍 Konum ayarlanıyor...
-✅ Browser başlatıldı
-🔐 Deysis'e giriş yapılıyor...
-✅ Giriş başarılı
-🎯 Yoklama sayfasına gidiliyor...
-🔢 Ders kodu giriliyor... 123456
-✅ Derse başarıyla katıldınız 123456
-
-✅ Yoklamaya Başarıyla Katıldınız
-
-📧 E-posta: ahmet@ogr.deu.edu.tr
-🔢 Ders Kodu: `123456`
-⏰ Tarih: 03.01.2025
-
-🎉 İşlem tamamlandı
-
-🔒 Browser kapatıldı
-```
-
-## 🗄️ Veritabanı Yapısı
-
-### Users Tablosu
+**Users Table:**
 
 ```sql
 CREATE TABLE users (
@@ -203,7 +137,7 @@ CREATE TABLE users (
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     school_email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,  -- Deysis şifresi (düz metin)
+    password VARCHAR(255) NOT NULL,  -- plain text for Deysis login
     is_active BOOLEAN DEFAULT TRUE,
     is_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -211,98 +145,63 @@ CREATE TABLE users (
 );
 ```
 
-**Not:** Şifreler düz metin olarak saklanır çünkü Deysis platformuna giriş için kullanılır.
+⚠️ **Note:** Passwords are stored in plain text only because Deysis requires direct login.
 
-## 🔧 Teknik Detaylar
+---
 
-### Deysis Entegrasyonu
+## 🔧 Technical Details
 
-Bot, Deysis platformu ile etkileşim için şu özellikleri kullanır:
+* **Puppeteer** for headless Chrome automation
+* **Location spoofing** → Tınaztepe Campus (38.3675561, 27.2016134)
+* **Permission management** → Automatically denies camera/mic
+* **Error handling** → Detects toast messages and invalid codes
+* **Session management** → Uses cookies and handles session persistence
 
-- **Puppeteer:** Headless Chrome browser otomasyonu
-- **Konum Spoofing:** Tınaztepe Kampüsü koordinatları (38.3675561, 27.2016134)
-- **İzin Yönetimi:** Kamera/mikrofon izinlerini otomatik reddetme
-- **Element Seçimi:** XPath ve CSS selector kombinasyonu
-- **Hata Tespiti:** Toast mesajları ve sayfa içeriği analizi
-- **Session Yönetimi:** Oturum sürekliliği ve cookie yönetimi
+---
 
-### Browser Optimizasyonları
+## 📦 Technologies Used
 
-- **Minimal Kaynak Kullanımı:** Sadece gerekli sayfalarda açılır
-- **Otomatik Temizlik:** İşlem bitince kapatılır
-- **Hata Toleransı:** Sayfa yükleme hatalarında yeniden deneme
-- **Element Bekleme:** Dinamik içerik yüklenmesini bekler
+* **Node.js** – Runtime
+* **node-telegram-bot-api** – Telegram bot framework
+* **mysql2** – MySQL driver
+* **puppeteer** – Browser automation
+* **axios** – HTTP requests
+* **cheerio** – HTML parsing
+* **dotenv** – Environment management
 
-## 🔧 Geliştirme
+---
 
-### Geliştirme Modunda Çalıştırma
+## 🔒 Security & Performance
 
-```bash
-npm run dev
-```
+### Security
 
-### Veritabanı Kurulumu (Manuel)
+* Only DEU school emails allowed
+* Plain text password storage (due to Deysis requirements)
+* Connection pooling for DB connections
+* Markdown-safe message formatting
 
-```bash
-node setup-database.js
-```
+### Performance
 
-### Deysis Giriş Modülü Testi
+* Browser only launches during `/attend`
+* Automatic cleanup after process ends
+* Lightweight memory usage
+* Fast bot startup
 
-```bash
-npm run test-deysis
-```
+---
 
-Bu komut Deysis platformuna giriş modülünü test eder. Test dosyasında gerçek e-posta ve şifre bilgilerini girmeniz gerekir.
+## 📞 Support
 
-## 📦 Kullanılan Teknolojiler
+1. Re-read this README
+2. Verify database connection settings
+3. Check your bot token
+4. Ensure Node.js & MySQL versions are compatible
 
-- **Node.js** - Runtime environment
-- **node-telegram-bot-api** - Telegram Bot API
-- **mysql2** - MySQL veritabanı bağlantısı
-- **validator** - E-posta validasyonu
-- **dotenv** - Çevre değişkenleri yönetimi
-- **puppeteer** - Web scraping ve browser otomasyonu
-- **axios** - HTTP istekleri
-- **cheerio** - HTML parsing
+---
 
-## 🔒 Güvenlik ve Performans
+## 📄 License
 
-### Güvenlik
-- Şifreler Deysis platformuna giriş için düz metin olarak saklanır
-- E-posta adresleri sadece DEÜ domain'lerini kabul eder
-- Kullanıcı durumları bot belleğinde güvenli şekilde saklanır
-- Veritabanı bağlantıları connection pooling ile yönetilir
-- MarkdownV2 güvenli mesaj formatı kullanılır
+This project is licensed under the **MIT License**.
 
-### Performans Optimizasyonları
-- **Akıllı Browser Yönetimi:** Browser sadece `/attend` komutu kullanıldığında açılır
-- **Otomatik Temizlik:** İşlem bitince browser otomatik kapatılır
-- **Düşük Bellek Kullanımı:** Bot başlangıcında gereksiz kaynak tüketimi yok
-- **Hızlı Başlatma:** Bot çok hızlı başlar ve hazır olur
+⚠️ **Disclaimer:** This bot is created strictly **for educational purposes only**. Use responsibly and only with your own credentials.
 
-## 📞 Destek
-
-Herhangi bir sorun yaşarsanız:
-
-1. README dosyasını tekrar okuyun
-2. Veritabanı bağlantı ayarlarını kontrol edin
-3. Bot token'ının doğru olduğundan emin olun
-4. Node.js ve MySQL sürümlerini kontrol edin
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
-
-## 🚧 Gelecek Özellikler
-
-- [x] Deysis platformu entegrasyonu ✅
-- [x] Otomatik yoklama katılımı ✅
-- [x] Gerçek zamanlı işlem takibi ✅
-- [x] Akıllı browser yönetimi ✅
-- [ ] Kullanıcı istatistikleri
-- [ ] Admin paneli
-- [ ] Bildirim sistemi
-- [ ] Çoklu kampüs desteği
-- [ ] Toplu yoklama katılımı
-- [ ] Yoklama geçmişi takibi
+---
