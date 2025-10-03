@@ -3,11 +3,11 @@ require('dotenv').config();
 
 // MySQL veritabanı bağlantı havuzu
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'deysis_users',
+    host: process.env.MYSQLHOST || 'localhost',
+    port: process.env.MYSQLPORT || 3306,
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQL_ROOT_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'deysis_users',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
