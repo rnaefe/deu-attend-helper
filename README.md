@@ -1,4 +1,4 @@
-# Deysis Yoklama Otomasyonu - Telegram Bot
+# Deysis Yoklama Otomasyonu - for educational purposes only
 
 Bu proje, DEÜ öğrencilerinin Deysis yoklama platformuna katılımını otomatize etmek için geliştirilmiş bir Telegram botudur. Bot, kullanıcıların Deysis platformuna otomatik giriş yapmasını ve yoklamaya katılmasını sağlar.
 
