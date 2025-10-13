@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for deysis-bypass
-# Uses node:18-bullseye for compatibility with puppeteer
+# Uses node:20-bullseye for compatibility with puppeteer and latest packages
 
-FROM node:18-bullseye AS build
+FROM node:20-bullseye AS build
 WORKDIR /usr/src/app
 
 # Install deps
@@ -12,7 +12,7 @@ RUN npm ci --only=production || npm install --only=production
 COPY . .
 
 # Production image
-FROM node:18-bullseye-slim
+FROM node:20-bullseye-slim
 WORKDIR /usr/src/app
 
 # Install minimal packages required by puppeteer (Chromium)
