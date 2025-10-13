@@ -189,7 +189,59 @@ CREATE TABLE users (
 
 ---
 
-## 📞 Support
+## � Docker
+
+You can run this project in a Docker container. The Docker image includes all dependencies required for Puppeteer/Chromium.
+
+### Build Docker Image
+
+```powershell
+docker build -t deysis-bypass:latest .
+```
+
+### Run with Docker
+
+Run the container with environment variables from your `.env` file:
+
+```powershell
+docker run --env-file .env --rm --name deysis-bypass deysis-bypass:latest
+```
+
+### Run with Docker Compose
+
+For easier management, use docker-compose:
+
+```powershell
+docker-compose up --build
+```
+
+To run in detached mode (background):
+
+```powershell
+docker-compose up -d --build
+```
+
+View logs:
+
+```powershell
+docker-compose logs -f app
+```
+
+Stop the container:
+
+```powershell
+docker-compose down
+```
+
+### Notes
+
+- The bot runs as a Telegram client and doesn't expose HTTP ports by default
+- If you want to run MySQL in Docker too, uncomment the `db` service in `docker-compose.yml` and set `MYSQLHOST=db` in your `.env`
+- Make sure your `.env` file is properly configured before building
+
+---
+
+## �📞 Support
 
 1. Re-read this README
 2. Verify database connection settings

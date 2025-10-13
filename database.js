@@ -3,17 +3,7 @@ require('dotenv').config();
 
 // MySQL veritabanı bağlantı havuzu
 const pool = mysql.createPool({
-    host: process.env.MYSQLHOST || 'localhost',
-    port: process.env.MYSQLPORT || 3306,
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQL_ROOT_PASSWORD || '',
-    database: process.env.MYSQL_DATABASE || 'deysis_users',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    acquireTimeout: 60000,
-    timeout: 60000,
-    reconnect: true
+    uri: process.env.MYSQL_CONNECTION_STRING,
 });
 
 // Veritabanı bağlantısını test et

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    restart: unless-stopped
+    # This is a Telegram bot (client) - no HTTP ports needed by default
+    # If you add an HTTP interface later, uncomment and configure ports:
+    # ports:
+    #   - "3000:3000"
+    
+    # Optional: Add MySQL service
+    # Uncomment if you want MySQL in the same compose stack
+    # depends_on:
+    #   - db
+
+  # MySQL service (optional)
+  # db:
+  #   image: mysql:8.0
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+
+# volumes:
+#   mysql_data:
