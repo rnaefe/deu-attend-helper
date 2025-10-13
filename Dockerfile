@@ -8,6 +8,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --only=production || npm install --only=production
 
+# Install Puppeteer browsers (Chrome)
+RUN npx puppeteer browsers install chrome
+
 # Copy source
 COPY . .
 
@@ -59,12 +62,17 @@ RUN apt-get update \
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app .
 
+# Copy Puppeteer cache (Chrome binary)
+COPY --from=build /root/.cache/puppeteer /home/appuser/.cache/puppeteer
+
 # Create non-root user for security
 RUN useradd --user-group --create-home --shell /bin/false appuser \
-    && chown -R appuser:appuser /usr/src/app
+    && chown -R appuser:appuser /usr/src/app \
+    && chown -R appuser:appuser /home/appuser/.cache
 
 USER appuser
 
 ENV NODE_ENV=production
+ENV PUPPETEER_CACHE_DIR=/home/appuser/.cache/puppeteer
 
 CMD ["node", "index.js"]
