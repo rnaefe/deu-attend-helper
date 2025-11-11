@@ -48,7 +48,7 @@ class DeysisLogin {
             
             // Playwright browser'ı başlat
             this.browser = await chromium.launch({
-                headless: false, // Test için false yapabilirsiniz
+                headless: true, // Test için false yapabilirsiniz
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
