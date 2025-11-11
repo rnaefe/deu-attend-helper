@@ -1124,22 +1124,91 @@ class DeysisLogin {
             }
             
             // Eğer ikisi de tespit edilmediyse -> MANUEL KONTROL GEREKLİ
+            // NOT: Listener'da ikisi de çıkmazsa, direkt manuel kontrol mesajı gönder
+            // Çünkü ya swal ya da toast kesinlikle çıkıyor, ikisi de yoksa bir sorun var demektir
             if (!toastErrorDetected && !swal2SuccessDetected) {
                 console.log(`⚠️ Ne toast-error ne de Swal2-success tespit edilemedi! Manuel kontrol gerekli.`);
+                
+                // Son bir kontrol daha yap (belki elementler geç göründü)
+                console.log('🔍 Son kontrol yapılıyor (elementler geç görünmüş olabilir)...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Swal2 popup var mı kontrol et (success ikonu olmasa bile)
+                const finalSwal2Check = await this.page.evaluate(() => {
+                    const container = document.querySelector('.swal2-container');
+                    const popup = document.querySelector('.swal2-popup');
+                    if (container && popup) {
+                        const successIcon = container.querySelector('.swal2-success, .swal2-icon-success, .swal2-success-ring');
+                        const hasSuccess = successIcon && window.getComputedStyle(successIcon).opacity > 0;
+                        return {
+                            found: true,
+                            hasSuccess: hasSuccess,
+                            popupText: popup.textContent || popup.innerText || ''
+                        };
+                    }
+                    return { found: false };
+                }).catch(() => ({ found: false }));
+                
+                // Toast-error var mı kontrol et
+                const finalToastCheck = await this.page.evaluate(() => {
+                    const container = document.querySelector('#toast-container');
+                    if (container) {
+                        const errorToast = container.querySelector('.toast-error');
+                        if (errorToast) {
+                            const style = window.getComputedStyle(errorToast);
+                            const isVisible = parseFloat(style.opacity) > 0 && style.display !== 'none';
+                            return {
+                                found: true,
+                                isVisible: isVisible,
+                                toastText: errorToast.textContent || errorToast.innerText || ''
+                            };
+                        }
+                    }
+                    return { found: false };
+                }).catch(() => ({ found: false }));
+                
+                // Eğer son kontrolde bir şey bulunduysa, onu kullan
+                if (finalSwal2Check.found && finalSwal2Check.hasSuccess) {
+                    console.log('✅ Son kontrolde Swal2-success bulundu!');
+                    return {
+                        success: true,
+                        message: 'Yoklama başarıyla tamamlandı (Swal2-success son kontrolde tespit edildi)',
+                        swal2Success: true,
+                        detectedBy: 'swal2-success-final-check'
+                    };
+                }
+                
+                if (finalToastCheck.found && finalToastCheck.isVisible) {
+                    console.log('❌ Son kontrolde toast-error bulundu!');
+                    return {
+                        success: false,
+                        error: 'Ders kodu bulunamadı. Lütfen doğru ders kodunu giriniz.',
+                        errorType: 'INVALID_CODE',
+                        detectedBy: 'toast-error-final-check'
+                    };
+                }
+                
+                // Hiçbir şey bulunamadı -> MANUEL KONTROL GEREKLİ
                 return {
                     success: false,
                     error: 'Yoklama sonucu tespit edilemedi. Ne toast-error ne de Swal2-success görünmedi. Lütfen manuel olarak kontrol edin.',
                     errorType: 'MANUAL_CHECK_REQUIRED',
                     detectedBy: 'no-indicator-found',
-                    requiresManualCheck: true
+                    requiresManualCheck: true,
+                    finalSwal2Check: finalSwal2Check,
+                    finalToastCheck: finalToastCheck
                 };
             }
             
-            // Toast-error görünmedi, biraz bekle ve tekrar kontrol et (toast geç görünebilir)
-            console.log('ℹ️ Toast-error listener timeout, son kontrol yapılıyor...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Eğer birisi tespit edildiyse, son kontrolleri yap (fallback - sadece güvenlik için)
+            // NOT: Bu kodlar sadece listener'da birisi tespit edildiyse çalışır
+            // Çünkü yukarıda ikisi de tespit edilmediyse zaten return edildi
             
-            // Son kontrol: "Yoklama Bulunamadı" yazısını ara
+            // Son kontrol: "Yoklama Bulunamadı" yazısını ara (sadece toast-error tespit edilmediyse)
+            if (!toastErrorDetected) {
+                console.log('ℹ️ Toast-error tespit edilmedi, son kontrol yapılıyor...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
             console.log('🔍 "Yoklama Bulunamadı" yazısı son kontrol...');
             const yoklamaBulunamadiCheck = await this.page.evaluate(() => {
                 // Sayfa içeriğinde "Yoklama Bulunamadı" yazısını ara
