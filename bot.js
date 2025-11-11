@@ -372,6 +372,12 @@ class DeysisBot {
                     errorMessage += `💡 **Çözüm:** Sayfa yükleme sorunu olabilir, tekrar deneyin\\.`;
                 } else if (result.errorType === 'SYSTEM_ERROR') {
                     errorMessage += `💡 **Çözüm:** Sistem hatası, daha sonra tekrar deneyin\\.`;
+                } else if (result.errorType === 'MANUAL_CHECK_REQUIRED') {
+                    errorMessage += `⚠️ **Önemli:** Yoklama sonucu otomatik tespit edilemedi\\.\n\n` +
+                                  `🔍 **Manuel Kontrol Gerekli:**\n` +
+                                  `• Deysis sisteminde yoklama durumunuzu kontrol edin\\.\n` +
+                                  `• Eğer yoklamaya katıldıysanız, sistem gecikmeli yanıt vermiş olabilir\\.\n` +
+                                  `• Eğer katılamadıysanız, ders kodunu kontrol edip tekrar deneyin\\.`;
                 } else {
                     errorMessage += `💡 **Çözüm:** Tekrar deneyin veya ders kodunu kontrol edin\\.`;
                 }

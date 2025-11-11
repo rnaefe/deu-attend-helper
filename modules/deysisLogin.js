@@ -628,17 +628,17 @@ class DeysisLogin {
             // Kamera izni popup'ını kontrol et
             await this.handleCameraPermission();
             
-            // Ders kodunu gir
-            const codeResult = await this.enterCourseCode(courseCode);
-            
-            if (codeResult && codeResult.success) {
-                console.log('✅ Yoklama katıl işlemi tamamlandı');
+                // Ders kodunu gir
+                const codeResult = await this.enterCourseCode(courseCode);
+                
+                if (codeResult && codeResult.success) {
+                    console.log('✅ Yoklama katıl işlemi tamamlandı');
                 return {
                     success: true,
                     message: 'Yoklama katıl işlemi başarıyla tamamlandı'
                 };
-            } else {
-                console.log('❌ Yoklama katıl işlemi başarısız');
+                } else {
+                    console.log('❌ Yoklama katıl işlemi başarısız');
                 const errorMessage = codeResult ? codeResult.error : 'Ders kodu girme işlemi başarısız';
                 const errorType = codeResult ? codeResult.errorType : 'UNKNOWN';
                 
@@ -648,7 +648,7 @@ class DeysisLogin {
                     error: errorMessage,
                     errorType: errorType
                 };
-            }
+                }
             
         } catch (error) {
             console.log(`❌ Yoklama katıl sayfası hatası: ${error.message}`);
@@ -854,18 +854,20 @@ class DeysisLogin {
         try {
             console.log('🔍 Yoklama sonucu kontrol ediliyor (toast container ve SweetAlert2)...');
             
-            // 1. TOAST-ERROR LISTENER: Toast-error'un görünmesini bekle (en güvenilir yöntem)
-            console.log('⏳ Toast-error listener başlatılıyor (max 8 saniye)...');
+            // 1. TOAST-ERROR VE SWAL2-SUCCESS LISTENER: İkisini de dinle (en güvenilir yöntem)
+            console.log('⏳ Toast-error ve Swal2-success listener başlatılıyor (max 10 saniye)...');
             let toastErrorDetected = false;
+            let swal2SuccessDetected = false;
             let toastErrorInfo = null;
+            let swal2SuccessInfo = null;
             
             try {
-                // Toast-error'un görünmesini bekle (listener ile)
+                // Toast-error ve Swal2-success'i aynı anda dinle
                 await Promise.race([
-                    // Toast-error görünene kadar bekle
+                    // 1. Toast-error görünene kadar bekle
                     this.page.waitForSelector('#toast-container .toast-error', { 
                         state: 'visible', 
-                        timeout: 8000 
+                        timeout: 10000 
                     }).then(async () => {
                         console.log('✅ Toast-error göründü! İçeriği okunuyor...');
                         toastErrorDetected = true;
@@ -907,9 +909,129 @@ class DeysisLogin {
                         }).catch(() => null);
                         
                         console.log(`❌ Toast-error içeriği: Başlık: "${toastErrorInfo?.title || ''}", Mesaj: "${toastErrorInfo?.message || ''}"`);
+                    }).catch(() => {
+                        console.log('ℹ️ Toast-error görünmedi (timeout)');
                     }),
                     
-                    // "Yoklama Bulunamadı" yazısını bekle (alternatif kontrol)
+                    // 2. Swal2-success görünene kadar bekle
+                    Promise.race([
+                        // Swal2-success ikonu kontrolü
+                        this.page.waitForSelector('.swal2-success', { 
+                            state: 'visible', 
+                            timeout: 10000 
+                        }).then(async () => {
+                            console.log('✅ Swal2-success ikonu göründü!');
+                            swal2SuccessDetected = true;
+                            
+                            // Swal2 içeriğini oku
+                            swal2SuccessInfo = await this.page.evaluate(() => {
+                                const container = document.querySelector('.swal2-container');
+                                const popup = document.querySelector('.swal2-popup');
+                                if (!popup) return null;
+                                
+                                const titleEl = popup.querySelector('.swal2-title');
+                                const contentEl = popup.querySelector('.swal2-html-container');
+                                
+                                const title = titleEl ? (titleEl.textContent || titleEl.innerText || '') : '';
+                                const content = contentEl ? (contentEl.textContent || contentEl.innerText || '') : '';
+                                
+                    return {
+                                    title: title.trim(),
+                                    content: content.trim(),
+                                    fullText: (title + ' ' + content).trim()
+                                };
+                            }).catch(() => null);
+                            
+                            console.log(`✅ Swal2-success içeriği: Başlık: "${swal2SuccessInfo?.title || ''}", İçerik: "${swal2SuccessInfo?.content || ''}"`);
+                        }).catch(() => {
+                            console.log('ℹ️ Swal2-success ikonu görünmedi (timeout)');
+                        }),
+                        
+                        // Swal2-icon-success kontrolü
+                        this.page.waitForSelector('.swal2-icon-success', { 
+                            state: 'visible', 
+                            timeout: 10000 
+                        }).then(async () => {
+                            console.log('✅ Swal2-icon-success göründü!');
+                            swal2SuccessDetected = true;
+                            
+                            // Swal2 içeriğini oku
+                            swal2SuccessInfo = await this.page.evaluate(() => {
+                                const popup = document.querySelector('.swal2-popup');
+                                if (!popup) return null;
+                                
+                                const titleEl = popup.querySelector('.swal2-title');
+                                const contentEl = popup.querySelector('.swal2-html-container');
+                                
+                                const title = titleEl ? (titleEl.textContent || titleEl.innerText || '') : '';
+                                const content = contentEl ? (contentEl.textContent || contentEl.innerText || '') : '';
+                                
+                                return {
+                                    title: title.trim(),
+                                    content: content.trim(),
+                                    fullText: (title + ' ' + content).trim()
+                                };
+                            }).catch(() => null);
+                            
+                            console.log(`✅ Swal2-icon-success içeriği: Başlık: "${swal2SuccessInfo?.title || ''}", İçerik: "${swal2SuccessInfo?.content || ''}"`);
+                        }).catch(() => {
+                            console.log('ℹ️ Swal2-icon-success görünmedi (timeout)');
+                        }),
+                        
+                        // Swal2-container kontrolü (genel)
+                        this.page.waitForSelector('.swal2-container', { 
+                            state: 'visible', 
+                            timeout: 10000 
+                        }).then(async () => {
+                            console.log('✅ Swal2-container göründü! Success kontrolü yapılıyor...');
+                            
+                            // Container içinde success ikonu var mı kontrol et
+                            const hasSuccess = await this.page.evaluate(() => {
+                                const container = document.querySelector('.swal2-container');
+                                if (!container) return false;
+                                
+                                const successIcon = container.querySelector('.swal2-success, .swal2-icon-success, .swal2-success-ring');
+                                if (successIcon) {
+                                    const computedStyle = window.getComputedStyle(successIcon);
+                                    const opacity = parseFloat(computedStyle.opacity);
+                                    const display = computedStyle.display;
+                                    return opacity > 0 && display !== 'none';
+                                }
+                                return false;
+                            }).catch(() => false);
+                            
+                            if (hasSuccess) {
+                                console.log('✅ Swal2-container içinde success ikonu bulundu!');
+                                swal2SuccessDetected = true;
+                                
+                                // Swal2 içeriğini oku
+                                swal2SuccessInfo = await this.page.evaluate(() => {
+                                    const popup = document.querySelector('.swal2-popup');
+                                    if (!popup) return null;
+                                    
+                                    const titleEl = popup.querySelector('.swal2-title');
+                                    const contentEl = popup.querySelector('.swal2-html-container');
+                                    
+                                    const title = titleEl ? (titleEl.textContent || titleEl.innerText || '') : '';
+                                    const content = contentEl ? (contentEl.textContent || contentEl.innerText || '') : '';
+                                    
+                                    return {
+                                        title: title.trim(),
+                                        content: content.trim(),
+                                        fullText: (title + ' ' + content).trim()
+                                    };
+                                }).catch(() => null);
+                                
+                                console.log(`✅ Swal2-success içeriği: Başlık: "${swal2SuccessInfo?.title || ''}", İçerik: "${swal2SuccessInfo?.content || ''}"`);
+                            } else {
+                                console.log('ℹ️ Swal2-container var ama success ikonu yok');
+                            }
+                        }).catch(() => {
+                            console.log('ℹ️ Swal2-container görünmedi (timeout)');
+                        })
+                    ]),
+                    
+                    // 3. "Yoklama Bulunamadı" yazısını bekle (alternatif kontrol)
                     this.page.waitForFunction(() => {
                         const bodyText = (document.body.innerText || document.body.textContent || '').toLowerCase();
                         const container = document.querySelector('#toast-container');
@@ -919,7 +1041,7 @@ class DeysisLogin {
                                toastText.includes('yoklama bulunamadı') ||
                                bodyText.includes('yoklama not found') ||
                                toastText.includes('yoklama not found');
-                    }, { timeout: 8000 }).then(async () => {
+                    }, { timeout: 10000 }).then(async () => {
                         console.log('✅ "Yoklama Bulunamadı" yazısı göründü!');
                         toastErrorDetected = true;
                         toastErrorInfo = {
@@ -927,13 +1049,15 @@ class DeysisLogin {
                             message: 'Yoklama bulunamadı',
                             fullText: 'Hata Yoklama bulunamadı'
                         };
+                    }).catch(() => {
+                        console.log('ℹ️ "Yoklama Bulunamadı" yazısı görünmedi (timeout)');
                     }),
                     
-                    // Timeout: 8 saniye sonra devam et
-                    new Promise(resolve => setTimeout(resolve, 8000))
+                    // 4. Timeout: 10 saniye sonra devam et
+                    new Promise(resolve => setTimeout(resolve, 10000))
                 ]);
             } catch (error) {
-                console.log(`ℹ️ Toast-error listener hatası (normal olabilir): ${error.message}`);
+                console.log(`ℹ️ Listener hatası (normal olabilir): ${error.message}`);
             }
             
             // Eğer toast-error tespit edildiyse -> KESINLIKLE HATA
@@ -970,7 +1094,7 @@ class DeysisLogin {
                     errorMessage = message || `Yoklama hatası: ${fullText}`;
                 }
                 
-                    return {
+                return {
                     success: false,
                     error: errorMessage,
                     errorType: errorType,
@@ -978,6 +1102,36 @@ class DeysisLogin {
                     toastMessage: message,
                     fullText: fullText,
                     detectedBy: 'toast-error-listener'
+                };
+            }
+            
+            // Eğer Swal2-success tespit edildiyse -> KESINLIKLE BAŞARILI
+            if (swal2SuccessDetected && swal2SuccessInfo) {
+                const title = swal2SuccessInfo.title || '';
+                const content = swal2SuccessInfo.content || '';
+                const fullText = swal2SuccessInfo.fullText || '';
+                
+                console.log(`✅ Swal2-success tespit edildi! Başlık: "${title}", İçerik: "${content}"`);
+                
+                return {
+                    success: true,
+                    message: fullText || 'Yoklama başarıyla tamamlandı (SweetAlert2 success tespit edildi)',
+                    swal2Success: true,
+                    swal2Title: title,
+                    swal2Content: content,
+                    detectedBy: 'swal2-success-listener'
+                };
+            }
+            
+            // Eğer ikisi de tespit edilmediyse -> MANUEL KONTROL GEREKLİ
+            if (!toastErrorDetected && !swal2SuccessDetected) {
+                console.log(`⚠️ Ne toast-error ne de Swal2-success tespit edilemedi! Manuel kontrol gerekli.`);
+                return {
+                    success: false,
+                    error: 'Yoklama sonucu tespit edilemedi. Ne toast-error ne de Swal2-success görünmedi. Lütfen manuel olarak kontrol edin.',
+                    errorType: 'MANUAL_CHECK_REQUIRED',
+                    detectedBy: 'no-indicator-found',
+                    requiresManualCheck: true
                 };
             }
             
