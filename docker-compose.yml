@@ -1,31 +1,18 @@
 version: '3.8'
 
 services:
+  # Deysis Bot Application
   app:
     build: .
+    container_name: deysis_bot
     env_file:
       - .env
+    # Environment variables .env dosyasından otomatik olarak alınır
+    # Boş değerler için özel işlem yapılmaz, database.js içinde handle edilir
     restart: unless-stopped
-    # This is a Telegram bot (client) - no HTTP ports needed by default
-    # If you add an HTTP interface later, uncomment and configure ports:
-    # ports:
-    #   - "3000:3000"
-    
-    # Optional: Add MySQL service
-    # Uncomment if you want MySQL in the same compose stack
-    # depends_on:
-    #   - db
-
-  # MySQL service (optional)
-  # db:
-  #   image: mysql:8.0
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-  #   ports:
-  #     - "3306:3306"
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-
-# volumes:
-#   mysql_data:
+    # Host network'e bağlanmak için (Linux'ta çalışır, Windows/Mac'te çalışmaz)
+    # network_mode: "host"
+    # Windows/Mac için host.docker.internal kullanılmalı
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Telegram bot için port gerekmez (outgoing connections only)

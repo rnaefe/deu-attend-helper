@@ -151,11 +151,12 @@ CREATE TABLE users (
 
 ## 🔧 Technical Details
 
-* **Puppeteer** for headless Chrome automation
+* **Playwright** for headless browser automation (Chromium)
 * **Location spoofing** → Tınaztepe Campus (38.3675561, 27.2016134)
 * **Permission management** → Automatically denies camera/mic
 * **Error handling** → Detects toast messages and invalid codes
 * **Session management** → Uses cookies and handles session persistence
+* **Auto-wait** → Playwright automatically waits for elements to be ready
 
 ---
 
@@ -164,7 +165,7 @@ CREATE TABLE users (
 * **Node.js** – Runtime
 * **node-telegram-bot-api** – Telegram bot framework
 * **mysql2** – MySQL driver
-* **puppeteer** – Browser automation
+* **playwright** – Browser automation (modern, fast, reliable)
 * **axios** – HTTP requests
 * **cheerio** – HTML parsing
 * **dotenv** – Environment management
@@ -186,58 +187,70 @@ CREATE TABLE users (
 * Automatic cleanup after process ends
 * Lightweight memory usage
 * Fast bot startup
+* Playwright's auto-wait reduces flakiness and improves reliability
 
 ---
 
 ## � Docker
 
-You can run this project in a Docker container. The Docker image includes all dependencies required for Puppeteer/Chromium.
+Bu projeyi Docker ve Docker Compose kullanarak çalıştırabilirsiniz. Docker image, Puppeteer/Chromium için gerekli tüm bağımlılıkları içerir.
 
-### Build Docker Image
+### Hızlı Başlangıç
 
-```powershell
-docker build -t deysis-bypass:latest .
-```
+1. **.env dosyasını oluşturun:**
+   ```bash
+   cp env.example .env
+   ```
 
-### Run with Docker
+2. **.env dosyasını düzenleyin:**
+   - `TELEGRAM_BOT_TOKEN`: BotFather'dan aldığınız token
+   - `MYSQL_ROOT_PASSWORD`: Güçlü bir MySQL şifresi
+   - `MYSQLHOST=db` (Docker Compose için)
+   - Diğer ayarları ihtiyacınıza göre düzenleyin
 
-Run the container with environment variables from your `.env` file:
+3. **Docker Compose ile başlatın:**
+   ```bash
+   docker-compose up --build -d
+   ```
 
-```powershell
-docker run --env-file .env --rm --name deysis-bypass deysis-bypass:latest
-```
+4. **Logları izleyin:**
+   ```bash
+   docker-compose logs -f app
+   ```
 
-### Run with Docker Compose
+### Docker Compose Komutları
 
-For easier management, use docker-compose:
-
-```powershell
-docker-compose up --build
-```
-
-To run in detached mode (background):
-
-```powershell
+```bash
+# Container'ları başlat (detached mode)
 docker-compose up -d --build
-```
 
-View logs:
+# Logları görüntüle
+docker-compose logs -f
 
-```powershell
-docker-compose logs -f app
-```
+# Container'ları durdur
+docker-compose stop
 
-Stop the container:
-
-```powershell
+# Container'ları durdur ve kaldır
 docker-compose down
+
+# Container'ları durdur, kaldır ve volume'ları sil (DİKKAT: Veriler silinir!)
+docker-compose down -v
+
+# Container'ları yeniden başlat
+docker-compose restart
 ```
 
-### Notes
+### Detaylı Docker Kılavuzu
 
-- The bot runs as a Telegram client and doesn't expose HTTP ports by default
-- If you want to run MySQL in Docker too, uncomment the `db` service in `docker-compose.yml` and set `MYSQLHOST=db` in your `.env`
-- Make sure your `.env` file is properly configured before building
+Daha detaylı bilgi için [DOCKER.md](./DOCKER.md) dosyasına bakın.
+
+### Notlar
+
+- Bot, Telegram client olarak çalışır ve varsayılan olarak HTTP port açmaz
+- MySQL servisi Docker Compose ile otomatik olarak başlatılır
+- Veritabanı tabloları otomatik olarak oluşturulur (`init.sql`)
+- `.env` dosyanızı build etmeden önce düzgün şekilde yapılandırdığınızdan emin olun
+- Veritabanı verileri `mysql_data` volume'unda saklanır
 
 ---
 

@@ -1,20 +1,59 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+// MySQL bağlantı yapılandırması
+// MYSQL_CONNECTION_STRING varsa onu kullan, yoksa ayrı parametrelerden oluştur
+let poolConfig;
+
+if (process.env.MYSQL_CONNECTION_STRING) {
+    // Connection string ile bağlantı
+    poolConfig = {
+        uri: process.env.MYSQL_CONNECTION_STRING,
+    };
+} else {
+    // Ayrı parametreler ile bağlantı
+    // Şifre boş veya undefined ise undefined olarak ayarla (MySQL boş şifre için undefined kullanır)
+    const mysqlPassword = process.env.MYSQL_ROOT_PASSWORD;
+    const password = (mysqlPassword && mysqlPassword.trim() !== '') ? mysqlPassword : undefined;
+    
+    poolConfig = {
+        host: process.env.MYSQLHOST || 'localhost',
+        port: parseInt(process.env.MYSQLPORT) || 3306,
+        user: process.env.MYSQLUSER || 'root',
+        password: password, // undefined if empty, MySQL will not use password authentication
+        database: process.env.MYSQL_DATABASE || 'deysis_users',
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        charset: 'utf8mb4'
+    };
+    
+    // Debug: Bağlantı bilgilerini logla (şifre hariç)
+    console.log('🔌 MySQL bağlantı ayarları:');
+    console.log(`   Host: ${poolConfig.host}`);
+    console.log(`   Port: ${poolConfig.port}`);
+    console.log(`   User: ${poolConfig.user}`);
+    console.log(`   Database: ${poolConfig.database}`);
+    console.log(`   Password: ${password ? '*** (ayarlı)' : '(şifre yok)'}`);
+}
+
 // MySQL veritabanı bağlantı havuzu
-const pool = mysql.createPool({
-    uri: process.env.MYSQL_CONNECTION_STRING,
-});
+const pool = mysql.createPool(poolConfig);
 
 // Veritabanı bağlantısını test et
 async function testConnection() {
     try {
         const connection = await pool.getConnection();
         console.log('✅ MySQL veritabanına başarıyla bağlanıldı');
+        console.log(`   Bağlantı bilgisi: ${connection.config.host}:${connection.config.port}/${connection.config.database}`);
         connection.release();
         return true;
     } catch (error) {
         console.error('❌ MySQL veritabanı bağlantı hatası:', error.message);
+        console.error(`   Hata kodu: ${error.code}`);
+        console.error(`   Bağlanılmaya çalışılan: ${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`);
+        console.error(`   Kullanıcı: ${poolConfig.user}`);
+        console.error(`   Şifre durumu: ${poolConfig.password === undefined ? 'Şifre yok (normal)' : poolConfig.password ? 'Şifre var' : 'Boş şifre (sorun olabilir)'}`);
         return false;
     }
 }

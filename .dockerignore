@@ -1,16 +1,51 @@
+# Node modules
 node_modules
 npm-debug.log
+yarn-error.log
+
+# Environment files
 .env
 .env.local
+.env.*.local
+
+# Git
 .git
 .gitignore
-.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Documentation
 README.md
 LICENSE
 tutorial.md
+
+# Test files
+test
+*.test.js
+*.spec.js
+
+# Logs
 logs
-tmp
 *.log
-.DS_Store
-.vscode
-.idea
+
+# Database
+*.sql
+!init.sql
+
+# Misc
+.coverage
+.nyc_output
