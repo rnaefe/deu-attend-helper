@@ -91,13 +91,23 @@ async function createUser(userData) {
     try {
         const { telegram_id, username, first_name, last_name, school_email, password } = userData;
         
+        // undefined değerleri null veya boş string'e çevir (MySQL undefined kabul etmez)
+        const safeUsername = username || null;
+        const safeFirstName = first_name || null;
+        const safeLastName = last_name || null;
+        
+        // Zorunlu alanları kontrol et
+        if (!telegram_id || !school_email || !password) {
+            return { success: false, error: 'Eksik zorunlu alan: telegram_id, school_email veya password' };
+        }
+        
         const query = `
             INSERT INTO users (telegram_id, username, first_name, last_name, school_email, password)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
         
         const [result] = await pool.execute(query, [
-            telegram_id, username, first_name, last_name, school_email, password
+            telegram_id, safeUsername, safeFirstName, safeLastName, school_email, password
         ]);
         
         return { success: true, userId: result.insertId };

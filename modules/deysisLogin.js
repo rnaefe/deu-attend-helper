@@ -68,8 +68,8 @@ class DeysisLogin {
                 viewport: { width: 1366, height: 768 },
                 userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 geolocation: {
-                latitude: 38.3675561,
-                longitude: 27.2016134
+                latitude: 38.367219,
+                longitude: 27.203075
                 },
                 permissions: ['geolocation'], // Konum izni ver
                 locale: 'tr-TR',
